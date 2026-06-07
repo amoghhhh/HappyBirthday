@@ -6,7 +6,7 @@ import os
 app.secret_key = os.environ.get("SECRET_KEY", "birthday_secret_2024")
 
 VALID_Q1 = {"amogh", "amogh gupta", "amoghgupta"}
-VALID_Q2 = {"forever", "infinity"}
+VALID_Q2 = {"forever", "infinity", "always"}
 
 def check_q1(val):
     return re.sub(r'\s+', ' ', val.strip().lower()) in VALID_Q1
