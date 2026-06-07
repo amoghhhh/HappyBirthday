@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import re
 
 app = Flask(__name__)
-app.secret_key = "birthday_secret_2024"
+import os
+app.secret_key = os.environ.get("SECRET_KEY", "birthday_secret_2024")
 
 VALID_Q1 = {"amogh", "amogh gupta", "amoghgupta"}
 VALID_Q2 = {"forever", "infinity"}
