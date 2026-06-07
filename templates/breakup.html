@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Breakup? 😱💔</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Great+Vibes&family=Poppins:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      min-height:100vh;
+      background: linear-gradient(160deg,#ffe4f0,#fff5f8,#fce4ec);
+      font-family:'Poppins',sans-serif;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      overflow:hidden; position:relative;
+    }
+
+    .float-layer{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+    .petal{position:absolute;opacity:0.13;animation:floatUp linear infinite;}
+    @keyframes floatUp{0%{transform:translateY(105vh) rotate(0deg);}100%{transform:translateY(-10vh) rotate(30deg);opacity:0;}}
+
+    .card{
+      position:relative;z-index:1;
+      background:rgba(255,255,255,0.88);
+      backdrop-filter:blur(14px);
+      border:2px solid #f9b8d2;
+      border-radius:28px;
+      padding:48px 40px 40px;
+      max-width:500px; width:90vw;
+      text-align:center;
+      box-shadow:0 20px 60px rgba(255,105,155,0.2);
+      animation:fadeIn 0.8s ease;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+    .icon{font-size:3.5rem;margin-bottom:12px;animation:shake 0.6s ease-in-out infinite;}
+    @keyframes shake{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
+
+    h1{font-family:'Great Vibes',cursive;font-size:3rem;color:#c2185b;margin-bottom:8px;}
+    .sub{color:#c2778a;font-size:0.85rem;line-height:1.7;margin-bottom:32px;}
+    .sub strong{color:#d6356e;}
+
+    /* Running button - absolutely positioned */
+    #runBtn{
+      position:fixed;
+      background:linear-gradient(135deg,#e0e0e0,#bdbdbd);
+      color:#555;
+      border:none;border-radius:50px;
+      padding:14px 32px;
+      font-family:'Dancing Script',cursive;font-size:1.2rem;
+      cursor:pointer;
+      box-shadow:0 6px 18px rgba(0,0,0,0.12);
+      transition:background 0.2s;
+      z-index:10;
+      white-space:nowrap;
+    }
+    #runBtn:hover{background:linear-gradient(135deg,#d4d4d4,#b0b0b0);}
+
+    /* Stay button */
+    #stayBtn{
+      display:inline-block;
+      margin-top:8px;
+      background:linear-gradient(135deg,#f06292,#e91e8c);
+      color:white;border:none;border-radius:50px;
+      padding:16px 36px;
+      font-family:'Dancing Script',cursive;font-size:1.35rem;
+      cursor:pointer;
+      box-shadow:0 8px 24px rgba(233,30,140,0.38);
+      transition:transform 0.2s,box-shadow 0.3s;
+      text-decoration:none;
+    }
+    #stayBtn:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(233,30,140,0.48);}
+
+    .counter{
+      font-size:0.75rem;color:#d4a0b5;margin-top:18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="float-layer" id="floatLayer"></div>
+
+  <div class="card">
+    <div class="icon">💔</div>
+    <h1>Breakup?!</h1>
+    <p class="sub">
+      Shweta, are you <strong>absolutely sure</strong> about this?<br/>
+      Think of all the memories... the cuddles... the food we ate together 🍕<br/>
+      <strong>Are you REALLY sure?</strong>
+    </p>
+
+    <a href="/noway" id="stayBtn">💖 I do NOT want a breakup!</a>
+    <p class="counter" id="counter"></p>
+  </div>
+
+  <!-- The running button, placed outside card so it can roam the whole screen -->
+  <button id="runBtn" onclick="runAway()">😬 Yes, I'm sure...</button>
+
+  <script>
+    const layer = document.getElementById('floatLayer');
+    const items = ['💔','😢','🌸','😭','💕','✨'];
+    for(let i=0;i<20;i++){
+      const el=document.createElement('span');
+      el.className='petal';
+      el.textContent=items[Math.floor(Math.random()*items.length)];
+      el.style.left=Math.random()*100+'vw';
+      el.style.fontSize=(1+Math.random()*2)+'rem';
+      el.style.animationDuration=(9+Math.random()*14)+'s';
+      el.style.animationDelay=(Math.random()*10)+'s';
+      layer.appendChild(el);
+    }
+
+    const btn = document.getElementById('runBtn');
+    const counter = document.getElementById('counter');
+    let tries = 0;
+
+    const funnyTexts = [
+      "😬 Yes, I'm sure...",
+      "🏃 Nope nope nope!",
+      "😅 Catch me if you can!",
+      "👀 You almost got me!",
+      "🙈 I'm hiding from this question!",
+      "😂 Not today!",
+      "💨 Zoom zoom zoom!",
+      "🐥 Peekaboo!",
+      "🙃 Try harder...",
+      "😜 Still running!",
+      "🤸 Doing cartwheels now!",
+      "🚀 To the moon!",
+      "🌀 Getting dizzy...",
+      "😩 Why won't you catch me?!"
+    ];
+
+    // Initial random position
+    placeRandomly();
+
+    function placeRandomly() {
+      const btnW = btn.offsetWidth || 200;
+      const btnH = btn.offsetHeight || 50;
+      const maxX = window.innerWidth - btnW - 20;
+      const maxY = window.innerHeight - btnH - 20;
+      const x = 20 + Math.random() * maxX;
+      const y = 20 + Math.random() * maxY;
+      btn.style.left = x + 'px';
+      btn.style.top  = y + 'px';
+    }
+
+    function runAway() {
+      tries++;
+      btn.textContent = funnyTexts[tries % funnyTexts.length];
+      counter.textContent = `Shweta tried ${tries} time${tries>1?'s':''} to click this 😂 Give up already!`;
+
+      // Jump to a random spot away from current position
+      const btnW = btn.offsetWidth;
+      const btnH = btn.offsetHeight;
+      let newX, newY, curX = parseFloat(btn.style.left), curY = parseFloat(btn.style.top);
+
+      do {
+        newX = 20 + Math.random() * (window.innerWidth  - btnW - 40);
+        newY = 20 + Math.random() * (window.innerHeight - btnH - 40);
+      } while(Math.abs(newX-curX)<150 && Math.abs(newY-curY)<100);
+
+      btn.style.transition = 'left 0.3s ease, top 0.3s ease';
+      btn.style.left = newX + 'px';
+      btn.style.top  = newY + 'px';
+    }
+
+    // On mobile: run away on hover/touch approach too
+    btn.addEventListener('mouseover', runAway);
+
+    window.addEventListener('resize', placeRandomly);
+  </script>
+</body>
+</html>

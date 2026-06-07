@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Are You My Love? 💕</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ffe4f0, #fff0f6, #ffd6e7);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Floating hearts background */
+    .hearts-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+    .heart-float {
+      position: absolute;
+      font-size: 1.5rem;
+      opacity: 0.15;
+      animation: floatUp linear infinite;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(100vh) rotate(0deg); opacity: 0.15; }
+      100% { transform: translateY(-10vh) rotate(20deg); opacity: 0; }
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border: 2px solid #f9b8d2;
+      border-radius: 28px;
+      padding: 48px 44px;
+      width: 420px;
+      max-width: 95vw;
+      box-shadow: 0 20px 60px rgba(255, 105, 155, 0.2);
+      text-align: center;
+      animation: fadeIn 1s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+    .emoji-top { font-size: 3.2rem; margin-bottom: 8px; }
+
+    h1 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.4rem;
+      color: #d6356e;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      color: #c2778a;
+      font-size: 0.85rem;
+      margin-bottom: 28px;
+    }
+
+    .question-block { margin-bottom: 20px; text-align: left; }
+    label {
+      display: block;
+      font-size: 0.82rem;
+      color: #b05070;
+      font-weight: 400;
+      margin-bottom: 6px;
+    }
+    label span { font-size: 1rem; margin-right: 4px; }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.8px solid #f4a7c3;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      color: #7a3354;
+      background: #fff8fb;
+      outline: none;
+      transition: border 0.3s, box-shadow 0.3s;
+    }
+    input[type="text"]:focus {
+      border-color: #e05a8c;
+      box-shadow: 0 0 0 4px rgba(224, 90, 140, 0.12);
+    }
+    input[type="text"]::placeholder { color: #d4a0b5; }
+
+    .error {
+      background: #ffe0ec;
+      color: #c0305a;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      margin-bottom: 18px;
+      border: 1px solid #f4b8cc;
+    }
+
+    button {
+      margin-top: 6px;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(135deg, #f06292, #e91e8c);
+      color: white;
+      font-size: 1rem;
+      font-family: 'Dancing Script', cursive;
+      font-weight: 700;
+      font-size: 1.25rem;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: transform 0.2s, box-shadow 0.3s;
+      box-shadow: 0 6px 20px rgba(233, 30, 140, 0.35);
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(233, 30, 140, 0.45);
+    }
+
+    .hint {
+      margin-top: 20px;
+      font-size: 0.72rem;
+      color: #d4a0b5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating hearts -->
+  <div class="hearts-bg" id="heartsBg"></div>
+
+  <div class="card">
+    <div class="emoji-top">🌸</div>
+    <h1>Prove You're My Love</h1>
+    <p class="subtitle">Answer these little love questions to enter 💌</p>
+
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+      <div class="question-block">
+        <label><span>💘</span> Who is your boyfriend?</label>
+        <input type="text" name="q1" placeholder="His name..." autocomplete="off" required />
+      </div>
+
+      <div class="question-block">
+        <label><span>🌙</span> How long will you love him?</label>
+        <input type="text" name="q2" placeholder="One word answer..." autocomplete="off" required />
+      </div>
+
+      <button type="submit">Open Your Surprise 🎀</button>
+    </form>
+
+    <p class="hint">💕 Only my special one knows these answers</p>
+  </div>
+
+  <script>
+    const bg = document.getElementById('heartsBg');
+    const emojis = ['💕', '🌸', '💗', '🌺', '💓', '✨', '🦋', '🌷'];
+    for (let i = 0; i < 20; i++) {
+      const el = document.createElement('span');
+      el.className = 'heart-float';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.fontSize = (1 + Math.random() * 2) + 'rem';
+      el.style.animationDuration = (8 + Math.random() * 12) + 's';
+      el.style.animationDelay = (Math.random() * 10) + 's';
+      bg.appendChild(el);
+    }
+  </script>
+</body>
+</html>
