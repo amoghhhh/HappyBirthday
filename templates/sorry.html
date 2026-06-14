@@ -166,9 +166,10 @@
       box-shadow: 0 14px 36px rgba(233, 30, 140, 0.6);
     }
 
-    /* No button — starts inline, turns fixed once user tries to click */
+    /* No button — always fixed, roams the full screen (same as breakup page) */
     #noBtn {
-      background: rgba(80, 80, 80, 0.45);
+      position: fixed;
+      background: rgba(80, 80, 80, 0.55);
       color: #ccc;
       border: 1px solid rgba(150,150,150,0.3);
       border-radius: 50px;
@@ -177,15 +178,10 @@
       font-size: 1.2rem;
       cursor: pointer;
       white-space: nowrap;
-      max-width: calc(100vw - 32px); /* never wider than the screen */
-      position: relative;
-      z-index: 10;
-    }
-    #noBtn.running {
-      position: fixed;
       z-index: 9999;
-      /* transition added via JS after first placement so it doesn't animate from 0,0 */
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
     }
+    #noBtn:hover { background: rgba(100, 100, 100, 0.6); }
 
     .tries-counter {
       margin-top: 14px;
@@ -321,11 +317,13 @@
 
     <div class="btn-row">
       <button id="yesBtn" onclick="showForgiven()">💖 Yes, of course I forgive you!</button>
-      <button id="noBtn" onmouseover="initRun()" onclick="initRun()">💔 No, Never.</button>
     </div>
 
     <p class="tries-counter" id="triesCounter"></p>
   </div>
+
+  <!-- The running "No" button — outside the card so it can roam the full screen -->
+  <button id="noBtn" onclick="runAway()">💔 No, Never.</button>
 
   <script>
     // ── Falling rose petals ──
@@ -342,11 +340,10 @@
       petalLayer.appendChild(el);
     }
 
-    // ── Running "No" button ──
-    const noBtn = document.getElementById('noBtn');
+    // ── Running "No" button — exact same logic as breakup page ──
+    const noBtn  = document.getElementById('noBtn');
     const counter = document.getElementById('triesCounter');
     let tries = 0;
-    let hasStartedRunning = false;
 
     const noTexts = [
       '💔 No, Never.',
@@ -355,80 +352,55 @@
       '👀 Nice try though...',
       '😂 Still no!',
       '🙈 You can\'t catch this!',
-      '💨 Zoom!',
-      '🤸 Nope nope nope!',
-      '🙃 Keep trying...',
-      '😜 Not happening!',
-      '🐥 Too slow!',
-      '🚀 To infinity... NO!',
-      '🌀 Spinning away!',
-      '😩 You\'ll never catch me!',
-      '🫣 Peeking... still no!',
+      '💨 Zoom zoom zoom!',
+      '🐥 Peekaboo!',
+      '🙃 Try harder...',
+      '😜 Still running!',
+      '🤸 Doing cartwheels now!',
+      '🚀 To the moon!',
+      '🌀 Getting dizzy...',
+      '😩 Why won\'t you catch me?!'
     ];
 
-    function initRun() {
-      if (hasStartedRunning) { runAway(); return; }
-      hasStartedRunning = true;
+    // Place at a random spot on load
+    placeRandomly();
 
-      // Capture exact rendered position BEFORE touching position
-      const rect = noBtn.getBoundingClientRect();
-
-      // Switch to fixed — set left/top to the same visual spot first (no jump)
-      noBtn.classList.add('running');
-      // Do NOT lock width — let it size naturally to text, we'll clamp position instead
-      noBtn.style.left = rect.left + 'px';
-      noBtn.style.top  = rect.top  + 'px';
-
-      // Enable smooth transition only AFTER the first placement is painted
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          noBtn.style.transition = 'left 0.28s ease, top 0.28s ease';
-          runAway(); // now jump away
-        });
-      });
+    function placeRandomly() {
+      const btnW = noBtn.offsetWidth  || 200;
+      const btnH = noBtn.offsetHeight || 50;
+      const maxX = window.innerWidth  - btnW - 20;
+      const maxY = window.innerHeight - btnH - 20;
+      const x = 20 + Math.random() * maxX;
+      const y = 20 + Math.random() * maxY;
+      noBtn.style.left = x + 'px';
+      noBtn.style.top  = y + 'px';
     }
 
     function runAway() {
       tries++;
       noBtn.textContent = noTexts[tries % noTexts.length];
-      counter.textContent = tries === 1
-        ? `Shweta tried ${tries} time to click "No"... 😂 It'll never work!`
-        : `Shweta tried ${tries} times to click "No"... 😂 Give up already, just forgive me!`;
+      counter.textContent = `Shweta tried ${tries} time${tries > 1 ? 's' : ''} to click "No"... 😂 Give up already, just forgive me!`;
 
-      // Measure AFTER text update so we get the real current size
-      requestAnimationFrame(() => {
-        const w = noBtn.offsetWidth;
-        const h = noBtn.offsetHeight;
-        const maxX = window.innerWidth  - w - 16;
-        const maxY = window.innerHeight - h - 16;
-        const curX = parseFloat(noBtn.style.left) || 0;
-        const curY = parseFloat(noBtn.style.top)  || 0;
+      const btnW = noBtn.offsetWidth;
+      const btnH = noBtn.offsetHeight;
+      const curX = parseFloat(noBtn.style.left);
+      const curY = parseFloat(noBtn.style.top);
+      let newX, newY;
 
-        let newX, newY, attempts = 0;
-        do {
-          newX = 16 + Math.random() * Math.max(0, maxX - 16);
-          newY = 16 + Math.random() * Math.max(0, maxY - 16);
-          attempts++;
-        } while (attempts < 30 && Math.abs(newX - curX) < 140 && Math.abs(newY - curY) < 100);
+      do {
+        newX = 20 + Math.random() * (window.innerWidth  - btnW - 40);
+        newY = 20 + Math.random() * (window.innerHeight - btnH - 40);
+      } while (Math.abs(newX - curX) < 150 && Math.abs(newY - curY) < 100);
 
-        // Hard clamp — never let any edge go off screen
-        newX = Math.min(Math.max(16, newX), maxX);
-        newY = Math.min(Math.max(16, newY), maxY);
-
-        noBtn.style.left = newX + 'px';
-        noBtn.style.top  = newY + 'px';
-      });
+      noBtn.style.transition = 'left 0.3s ease, top 0.3s ease';
+      noBtn.style.left = newX + 'px';
+      noBtn.style.top  = newY + 'px';
     }
 
-    window.addEventListener('resize', () => {
-      if (!hasStartedRunning) return;
-      const w = noBtn.offsetWidth  || 180;
-      const h = noBtn.offsetHeight || 50;
-      const x = Math.min(Math.max(16, parseFloat(noBtn.style.left)), window.innerWidth  - w - 16);
-      const y = Math.min(Math.max(16, parseFloat(noBtn.style.top)),  window.innerHeight - h - 16);
-      noBtn.style.left = x + 'px';
-      noBtn.style.top  = y + 'px';
-    });
+    // Also run away on hover (desktop)
+    noBtn.addEventListener('mouseover', runAway);
+
+    window.addEventListener('resize', placeRandomly);
 
     // ── Forgiven moment ──
     const fgCanvas = document.getElementById('fgConfetti');
