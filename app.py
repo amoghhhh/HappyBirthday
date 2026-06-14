@@ -45,5 +45,11 @@ def noway():
         return redirect(url_for("login"))
     return render_template("noway.html")
 
+@app.route("/sorry")
+def sorry():
+    if not session.get("verified"):
+        return redirect(url_for("login"))
+    return render_template("sorry.html")
+
 if __name__ == "__main__":
     app.run(debug=True)
